@@ -44,16 +44,9 @@ targetCompatibility = 1.8
 
 
 buildscript {
-       repositories {
-        mavenLocal()
-        flatDir {
-            dirs 'libs'
-        }
-        maven {
-            url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
-        }
-        maven{url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-        maven{url 'http://maven.aliyun.com/nexus/content/repositories/google'}
+    repositories {
+        mavenCentral()
+        jcenter()
     }
 
     dependencies {
