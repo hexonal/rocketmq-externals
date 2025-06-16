@@ -16,11 +16,14 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
 import java.nio.file.Files
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
-
-apply plugin: 'java'
 apply from: LOGSTASH_CORE_PATH + "/../rubyUtils.gradle"
 
 // ===========================================================================
@@ -42,32 +45,9 @@ pluginInfo.pluginName      = "rocketmq" // must match the @LogstashPlugin annota
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
-buildscript {
-	repositories {
-		mavenLocal()
-		flatDir {
-			dirs 'libs'
-		}
-		maven {
-			url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
-		}
-		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-		maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
-	}
-	
-	dependencies {
-		classpath 'com.github.johnrengelman:shadow:6.1.0'
-	}
-}
-
-
-
 repositories {
     mavenCentral()
 }
-
-apply plugin: 'com.github.johnrengelman.shadow'
 
 shadowJar {
     archiveClassifier = null
@@ -90,8 +70,8 @@ clean {
     delete "${projectDir}/" + pluginInfo.pluginFullName() + ".gemspec"
     delete "${projectDir}/lib/"
     delete "${projectDir}/vendor/"
-    new FileNameFinder().getFileNames(projectDir.toString(), pluginInfo.pluginFullName() + "-?.?.?.gem").each { filename ->
-        delete filename
+    fileTree(dir: projectDir, include: pluginInfo.pluginFullName() + "-*.gem").each { file ->
+        delete file
     }
 }
 
@@ -119,11 +99,10 @@ tasks.register("generateRubySupportFiles") {
 
 tasks.register("removeObsoleteJars") {
     doLast {
-        new FileNameFinder().getFileNames(
-                projectDir.toString(),
-                "vendor/**/" + pluginInfo.pluginFullName() + "*.jar",
-                "vendor/**/" + pluginInfo.pluginFullName() + "-" + version + ".jar").each { f ->
-            delete f
+        fileTree(dir: projectDir, include: "vendor/**/" + pluginInfo.pluginFullName() + "*.jar")
+                .exclude("vendor/**/" + pluginInfo.pluginFullName() + "-" + version + ".jar")
+                .each { file ->
+            delete file
         }
     }
 }
