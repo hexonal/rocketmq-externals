@@ -19,24 +19,23 @@
 import java.nio.file.Files
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
-
 apply plugin: 'java'
 apply from: LOGSTASH_CORE_PATH + "/../rubyUtils.gradle"
 
 // ===========================================================================
 // plugin info
 // ===========================================================================
-group                      'org.apache.rocketmq.logstashplugin.input' // must match the package of the main plugin class
-version                    "${file("VERSION").text.trim()}" // read from required VERSION file
-description                = "A logstash input plugin for sending events to Apache RocketMQ"
-pluginInfo.licenses        = ['Apache-2.0'] 
+group 'org.apache.rocketmq.logstashplugin.input' // must match the package of the main plugin class
+version "${file("VERSION").text.trim()}" // read from required VERSION file
+description = "A logstash input plugin for sending events to Apache RocketMQ"
+pluginInfo.licenses = ['Apache-2.0']
 pluginInfo.longDescription = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using \$LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
-pluginInfo.authors         = ['RocketMQ developers']
-pluginInfo.email           = ['users@rocketmq.apache.org']
-pluginInfo.homepage        = "https://rocketmq.apache.org/"
-pluginInfo.pluginType      = "input"
-pluginInfo.pluginClass     = "RocketMQ"
-pluginInfo.pluginName      = "rocketmq" // must match the @LogstashPlugin annotation in the main plugin class
+pluginInfo.authors = ['RocketMQ developers']
+pluginInfo.email = ['users@rocketmq.apache.org']
+pluginInfo.homepage = "https://rocketmq.apache.org/"
+pluginInfo.pluginType = "input"
+pluginInfo.pluginClass = "RocketMQ"
+pluginInfo.pluginName = "rocketmq" // must match the @LogstashPlugin annotation in the main plugin class
 // ===========================================================================
 
 sourceCompatibility = 1.8
@@ -44,14 +43,21 @@ targetCompatibility = 1.8
 
 
 buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-    }
+	repositories {
+		mavenLocal()
+		flatDir {
+			dirs 'libs'
+		}
+		maven {
+			url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
+		}
+		maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+		maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
+	}
+	
+	dependencies {
+		classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+	}
 }
 
 
@@ -131,5 +137,3 @@ tasks.register("gem"){
         buildGem(projectDir, buildDir, pluginInfo.pluginFullName() + ".gemspec")
     }
 }
-
-

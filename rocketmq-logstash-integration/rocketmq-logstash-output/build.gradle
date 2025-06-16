@@ -44,13 +44,20 @@ targetCompatibility = 1.8
 
 
 buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
+       repositories {
+        mavenLocal()
+        flatDir {
+            dirs 'libs'
+        }
+        maven {
+            url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
+        }
+        maven{url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        maven{url 'http://maven.aliyun.com/nexus/content/repositories/google'}
     }
 
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
     }
 }
 
@@ -130,5 +137,3 @@ tasks.register("gem"){
         buildGem(projectDir, buildDir, pluginInfo.pluginFullName() + ".gemspec")
     }
 }
-
-
